@@ -40,7 +40,7 @@ export default function FormPropsTextFields() {
     })
       .then((results) => results.json())
       .then((data) => {
-        console.log(data.result);
+        console.log(data);
       })
       .catch(function (error) {
         console.log(error);
