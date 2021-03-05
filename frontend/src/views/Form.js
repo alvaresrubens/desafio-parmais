@@ -6,6 +6,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
 import Button from "@material-ui/core/Button";
+import Fact from "./Fact";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -28,7 +29,7 @@ export default function FormPropsTextFields() {
 
   const [category, setCategory] = React.useState("");
 
-  const [fact, setFact] = useState([]);
+  const [factData, setFactData] = useState([]);
 
   const handleChange = (event) => {
     setCategory(event.target.value);
@@ -40,61 +41,71 @@ export default function FormPropsTextFields() {
     })
       .then((results) => results.json())
       .then((data) => {
-        console.log(data);
+        let newArray = [...factData];
+        newArray.push(data);
+        setFactData(newArray);
       })
       .catch(function (error) {
         console.log(error);
       });
+    console.log(factData);
   };
 
   return (
-    <form className={classes.container} noValidate>
-      <FormControl className={classes.formControl}>
-        <TextField id="search" label="Search" />
-      </FormControl>
+    <div>
+      <form className={classes.container} noValidate>
+        <FormControl className={classes.formControl}>
+          <TextField id="search" label="Search" />
+        </FormControl>
 
-      <FormControl className={classes.formControl}>
-        <InputLabel shrink id="category">
-          Category
-        </InputLabel>
-        <Select
-          labelId="category-select"
-          id="category-select"
-          value={category}
-          onChange={handleChange}
-          displayEmpty
-          className={classes.selectEmpty}
+        <FormControl className={classes.formControl}>
+          <InputLabel shrink id="category">
+            Category
+          </InputLabel>
+          <Select
+            labelId="category-select"
+            id="category-select"
+            value={category}
+            onChange={handleChange}
+            displayEmpty
+            className={classes.selectEmpty}
+          >
+            <MenuItem value="">
+              <em>Any</em>
+            </MenuItem>
+            <MenuItem value={"Any"}>Any</MenuItem>
+            <MenuItem value={"Animal"}>Animal</MenuItem>
+            <MenuItem value={"Career"}>Career</MenuItem>
+            <MenuItem value={"Celebrity"}>Celebrity</MenuItem>
+            <MenuItem value={"Dev"}>Dev</MenuItem>
+            <MenuItem value={"Explicit"}>Explicit</MenuItem>
+            <MenuItem value={"Fashion"}>Fashion</MenuItem>
+            <MenuItem value={"Food"}>Food</MenuItem>
+            <MenuItem value={"History"}>History</MenuItem>
+            <MenuItem value={"Money"}>Money</MenuItem>
+            <MenuItem value={"Movie"}>Movie</MenuItem>
+            <MenuItem value={"Music"}>Music</MenuItem>
+            <MenuItem value={"Political"}>Political</MenuItem>
+            <MenuItem value={"Religion"}>Religion</MenuItem>
+            <MenuItem value={"Science"}>Science</MenuItem>
+            <MenuItem value={"Sport"}>Sport</MenuItem>
+            <MenuItem value={"Travel"}>Travel</MenuItem>
+          </Select>
+        </FormControl>
+        <Button
+          className={classes.button}
+          onClick={() => searchFacts()}
+          variant="contained"
+          color="primary"
         >
-          <MenuItem value="">
-            <em>Any</em>
-          </MenuItem>
-          <MenuItem value={"Any"}>Any</MenuItem>
-          <MenuItem value={"Animal"}>Animal</MenuItem>
-          <MenuItem value={"Career"}>Career</MenuItem>
-          <MenuItem value={"Celebrity"}>Celebrity</MenuItem>
-          <MenuItem value={"Dev"}>Dev</MenuItem>
-          <MenuItem value={"Explicit"}>Explicit</MenuItem>
-          <MenuItem value={"Fashion"}>Fashion</MenuItem>
-          <MenuItem value={"Food"}>Food</MenuItem>
-          <MenuItem value={"History"}>History</MenuItem>
-          <MenuItem value={"Money"}>Money</MenuItem>
-          <MenuItem value={"Movie"}>Movie</MenuItem>
-          <MenuItem value={"Music"}>Music</MenuItem>
-          <MenuItem value={"Political"}>Political</MenuItem>
-          <MenuItem value={"Religion"}>Religion</MenuItem>
-          <MenuItem value={"Science"}>Science</MenuItem>
-          <MenuItem value={"Sport"}>Sport</MenuItem>
-          <MenuItem value={"Travel"}>Travel</MenuItem>
-        </Select>
-      </FormControl>
-      <Button
-        className={classes.button}
-        onClick={() => searchFacts()}
-        variant="contained"
-        color="primary"
-      >
-        Get a new random fact!
-      </Button>
-    </form>
+          Get a new random fact!
+        </Button>
+      </form>
+      <div>
+        {factData.map((factItem) => (
+          <Fact key={factItem.id} fact={factItem.value} />
+        ))}
+      </div>
+    </div>
   );
 }
