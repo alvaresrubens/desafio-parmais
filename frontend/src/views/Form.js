@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import TextField from "@material-ui/core/TextField";
 import { makeStyles } from "@material-ui/core/styles";
 import Select from "@material-ui/core/Select";
@@ -27,15 +27,82 @@ const useStyles = makeStyles((theme) => ({
 export default function FormPropsTextFields() {
   const classes = useStyles();
 
-  const [category, setCategory] = React.useState("");
-
   const [factData, setFactData] = useState([]);
 
-  const handleChange = (event) => {
+  const [category, setCategory] = useState("");
+
+  const [freeText, setFreeText] = useState("");
+
+  const handleFreeText = (event) => {
+    setFreeText(event.target.value);
+  };
+
+  const handleCategory = (event) => {
     setCategory(event.target.value);
   };
 
+  const [categories, setCategories] = useState([]);
+
+  const loadCategories = () => {
+    fetch("http://localhost:3030/categories", {
+      method: "GET",
+    })
+      .then((results) => results.json())
+      .then((data) => {
+        setCategories(data);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  };
+
   const searchFacts = () => {
+    console.log(freeText, category);
+
+    if (
+      (freeText !== "" && category !== "") ||
+      (freeText === "" && category === "")
+    ) {
+      randomFact();
+    } else {
+      if (freeText !== "" && category === "") {
+        freeSearch(freeText);
+      } else {
+        categorySearch(category);
+      }
+    }
+  };
+
+  const categorySearch = (categoryQuery) => {
+    fetch(`http://localhost:3030/category${categoryQuery}`, {
+      method: "GET",
+    })
+      .then((results) => results.json())
+      .then((data) => {
+        console.log(data);
+        let newArray = [...factData];
+        newArray.push(data);
+        setFactData(newArray);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  };
+
+  const freeSearch = (text) => {
+    fetch(`http://localhost:3030/search${text}`, {
+      method: "GET",
+    })
+      .then((results) => results.json())
+      .then((data) => {
+        setFactData(data.result);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  };
+
+  const randomFact = () => {
     fetch(`http://localhost:3030/search-fact`, {
       method: "GET",
     })
@@ -48,14 +115,28 @@ export default function FormPropsTextFields() {
       .catch(function (error) {
         console.log(error);
       });
-    console.log(factData);
   };
 
+  const cleanResults = () => {
+    setFactData([]);
+  };
+
+  const capitalize = (str) => {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  };
+  // eslint-disable-next-line
+  useEffect(() => loadCategories(), []);
+  console.log(factData);
   return (
     <div>
       <form className={classes.container} noValidate>
         <FormControl className={classes.formControl}>
-          <TextField id="search" label="Search" />
+          <TextField
+            value={freeText}
+            onChange={handleFreeText}
+            id="search"
+            label="Search"
+          />
         </FormControl>
 
         <FormControl className={classes.formControl}>
@@ -66,30 +147,16 @@ export default function FormPropsTextFields() {
             labelId="category-select"
             id="category-select"
             value={category}
-            onChange={handleChange}
-            displayEmpty
+            onChange={handleCategory}
             className={classes.selectEmpty}
           >
-            <MenuItem value="">
-              <em>Any</em>
-            </MenuItem>
-            <MenuItem value={"Any"}>Any</MenuItem>
-            <MenuItem value={"Animal"}>Animal</MenuItem>
-            <MenuItem value={"Career"}>Career</MenuItem>
-            <MenuItem value={"Celebrity"}>Celebrity</MenuItem>
-            <MenuItem value={"Dev"}>Dev</MenuItem>
-            <MenuItem value={"Explicit"}>Explicit</MenuItem>
-            <MenuItem value={"Fashion"}>Fashion</MenuItem>
-            <MenuItem value={"Food"}>Food</MenuItem>
-            <MenuItem value={"History"}>History</MenuItem>
-            <MenuItem value={"Money"}>Money</MenuItem>
-            <MenuItem value={"Movie"}>Movie</MenuItem>
-            <MenuItem value={"Music"}>Music</MenuItem>
-            <MenuItem value={"Political"}>Political</MenuItem>
-            <MenuItem value={"Religion"}>Religion</MenuItem>
-            <MenuItem value={"Science"}>Science</MenuItem>
-            <MenuItem value={"Sport"}>Sport</MenuItem>
-            <MenuItem value={"Travel"}>Travel</MenuItem>
+            <MenuItem value="">Any</MenuItem>
+
+            {categories.map((categorie, index) => (
+              <MenuItem key={index} value={categorie}>
+                {capitalize(categorie)}
+              </MenuItem>
+            ))}
           </Select>
         </FormControl>
         <Button
@@ -100,11 +167,24 @@ export default function FormPropsTextFields() {
         >
           Get a new random fact!
         </Button>
+        <Button
+          className={classes.button}
+          onClick={() => cleanResults()}
+          variant="contained"
+          color="primary"
+        >
+          Clean results
+        </Button>
       </form>
       <div>
-        {factData.map((factItem) => (
-          <Fact key={factItem.id} fact={factItem.value} />
-        ))}
+        {factData.length > 0 ? (
+          <div>Showing {factData.length} results </div>
+        ) : null}
+        <div>
+          {factData.map((factItem, index) => (
+            <Fact key={index} fact={factItem.value} />
+          ))}
+        </div>
       </div>
     </div>
   );
