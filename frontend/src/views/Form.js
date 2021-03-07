@@ -81,7 +81,7 @@ export default function FormPropsTextFields() {
       .then((data) => {
         console.log(data);
         let newArray = [...factData];
-        newArray.push(data);
+        newArray.unshift(data);
         setFactData(newArray);
       })
       .catch(function (error) {
@@ -109,7 +109,7 @@ export default function FormPropsTextFields() {
       .then((results) => results.json())
       .then((data) => {
         let newArray = [...factData];
-        newArray.push(data);
+        newArray.unshift(data);
         setFactData(newArray);
       })
       .catch(function (error) {
@@ -176,6 +176,7 @@ export default function FormPropsTextFields() {
           Clean results
         </Button>
       </form>
+
       <div>
         {factData.length > 0 ? (
           <div>Showing {factData.length} results </div>

@@ -1,17 +1,34 @@
 import { makeStyles } from "@material-ui/core/styles";
-import Paper from "@material-ui/core/Paper";
 
 const useStyles = makeStyles((theme) => ({
-  main: {
-    backgroundColor: theme.palette.background.default,
-    width: "100%",
+  factBox: {
+    width: " 608px",
+    height: "172px",
+    left: "336px",
+    top: "364.26px",
+
+    background: " #FFFFFF",
+
+    boxShadow: "0px 3px 12px rgba(62, 69, 87, 0.25)",
+    borderRadius: "10px",
+  },
+  factDescription: {
+    width: "560px",
+    height: "76px",
+    left: "360px",
+    top: "412.26px",
+
+    fontFamily: "Mulish",
+    fontStyle: "normal",
+    fontWeight: "normal",
+    fontSize: " 14px",
+    lineHeight: "21px",
+
     display: "flex",
-    flexDirection: "column",
-    fontSize: "0.8rem",
-    fontFamily: "Roboto, Helvetica, Arial, sans-serif",
-    fontWeight: "400",
-    lineHeight: "1.5",
-    letterSpacing: "0.00938em",
+    alignItems: "center",
+    textAlign: "center",
+
+    color: "#20232D",
   },
 }));
 
@@ -19,10 +36,10 @@ function Fact(props) {
   const classes = useStyles();
 
   return (
-    <div className={classes.main}>
-      <Paper elevation={3}>
-        <div>{props.fact}</div>
-      </Paper>
+    <div className={classes.factBox}>
+      <div className={(classes.factBox, classes.factDescription)}>
+        {props.fact}
+      </div>
     </div>
   );
 }
