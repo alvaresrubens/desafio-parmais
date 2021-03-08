@@ -13,6 +13,7 @@ const useStyles = makeStyles({
     margin: "7%",
     display: "flex",
     flexDirection: "column",
+
     justifyContent: "center",
     alignItems: "center",
     fontFamily: "Mulish",
@@ -29,6 +30,7 @@ const useStyles = makeStyles({
     display: "flex",
     flexDirection: "row",
     margin: "30px",
+    flexWrap: "wrap",
   },
 
   inputField: {
@@ -80,6 +82,12 @@ const useStyles = makeStyles({
       background: "#1dbf80",
     },
   },
+  visible: {
+    visibility: "visible",
+  },
+  hidden: {
+    visibility: "hidden",
+  },
 });
 export default function FormPropsTextFields() {
   const classes = useStyles();
@@ -114,8 +122,6 @@ export default function FormPropsTextFields() {
   };
 
   const searchFacts = () => {
-    console.log(freeText, category);
-
     if (
       (freeText !== "" && category !== "") ||
       (freeText === "" && category === "")
@@ -179,7 +185,6 @@ export default function FormPropsTextFields() {
   };
   // eslint-disable-next-line
   useEffect(() => loadCategories(), []);
-  console.log(factData);
   return (
     <div className={classes.container}>
       <form className={classes.form} noValidate>
@@ -230,10 +235,8 @@ export default function FormPropsTextFields() {
           </FormControl>
         </div>
 
-        <div>
-          {factData.length > 0 ? (
-            <div>Showing {factData.length} results </div>
-          ) : null}
+        <div className={factData.length > 1 ? classes.visible : classes.hidden}>
+          Showing {factData.length} results{" "}
         </div>
         <Button
           className={classes.button}

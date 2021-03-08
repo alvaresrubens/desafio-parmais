@@ -3,12 +3,14 @@ import { makeStyles } from "@material-ui/core/styles";
 const useStyles = makeStyles((theme) => ({
   factBox: {
     marginTop: "20px",
-    width: "680px",
+    width: "100%",
+    maxWidht: "608px",
     height: "172px",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
+    flexShrink: "1",
 
     boxShadow: "0px 3px 12px rgba(62, 69, 87, 0.25)",
     borderRadius: "10px",
