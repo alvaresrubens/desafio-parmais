@@ -3,9 +3,12 @@ import { makeStyles } from "@material-ui/core/styles";
 const useStyles = makeStyles((theme) => ({
   factBox: {
     marginTop: "20px",
-    width: "100%",
-    maxWidht: "608px",
-    height: "172px",
+
+    width: "608px",
+    "@media (max-width: 860px)": {
+      width: "100%",
+    },
+    maxheight: "172px",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",

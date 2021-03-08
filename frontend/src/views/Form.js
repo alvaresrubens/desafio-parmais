@@ -13,37 +13,32 @@ const useStyles = makeStyles({
     margin: "7%",
     display: "flex",
     flexDirection: "column",
-
     justifyContent: "center",
     alignItems: "center",
     fontFamily: "Mulish",
     textAlign: "center",
     fontSize: "12px",
   },
-
   form: {
     display: "flex",
     flexDirection: "column",
   },
-
   inputsContainer: {
     display: "flex",
     flexDirection: "row",
     margin: "30px",
     flexWrap: "wrap",
   },
-
   inputField: {
     fontFamily: "Mulish",
-    width: "296px",
+    width: "300px",
     textAlign: "left",
-    marginLeft: "15px",
-
+    marginLeft: "10px",
+    marginRight: "10px",
     "& .MuiFormLabel-root": {
       fontFamily: "Mulish",
     },
   },
-
   item: {
     fontFamily: "Mulish",
     "&:hover": {
@@ -67,17 +62,14 @@ const useStyles = makeStyles({
     color: "#20232D",
     fontFamily: "Mulish",
     margin: "0 auto",
-
     fontStyle: "normal",
     fontWeight: "bold",
     fontSize: "16px",
     lineHeight: "20px",
     textTransform: "none",
-
     width: "245px",
     background: "#25EFA1",
     boxShadow: "0px 3px 5px rgba(0, 204, 126, 0.25)",
-
     "&:hover": {
       background: "#1dbf80",
     },
@@ -91,22 +83,17 @@ const useStyles = makeStyles({
 });
 export default function FormPropsTextFields() {
   const classes = useStyles();
-
+  const [categories, setCategories] = useState([]);
   const [factData, setFactData] = useState([]);
-
-  const [category, setCategory] = useState("");
-
   const [freeText, setFreeText] = useState("");
-
+  const [category, setCategory] = useState("Any");
+  const [termSize, setTermSize] = useState(false);
   const handleFreeText = (event) => {
     setFreeText(event.target.value);
   };
-
   const handleCategory = (event) => {
     setCategory(event.target.value);
   };
-
-  const [categories, setCategories] = useState([]);
 
   const loadCategories = () => {
     fetch("http://localhost:3030/categories", {
@@ -121,59 +108,45 @@ export default function FormPropsTextFields() {
       });
   };
 
+  const validateFields = () => {
+    setTermSize(false);
+    freeText.length > 0 && freeText.length < 3
+      ? setTermSize(true)
+      : searchFacts();
+  };
+
   const searchFacts = () => {
+    const urlCategory = `http://localhost:3030/category/${category}`;
+    const ulrFreeSearch = `http://localhost:3030/search/${freeText}`;
+    const urlRandom = `http://localhost:3030/search-fact`;
+
     if (
-      (freeText !== "" && category !== "") ||
-      (freeText === "" && category === "")
+      (freeText !== "" && category !== "Any") ||
+      (freeText === "" && category === "Any")
     ) {
-      randomFact();
+      getFact(urlRandom, false);
     } else {
-      if (freeText !== "" && category === "") {
-        freeSearch(freeText);
+      if (freeText !== "" && category === "Any") {
+        getFact(ulrFreeSearch, true);
       } else {
-        categorySearch(category);
+        getFact(urlCategory, false);
       }
     }
   };
 
-  const categorySearch = (categoryQuery) => {
-    fetch(`http://localhost:3030/category${categoryQuery}`, {
+  const getFact = (url, freeSearch) => {
+    fetch(url, {
       method: "GET",
     })
       .then((results) => results.json())
       .then((data) => {
-        console.log(data);
-        let newArray = [...factData];
-        newArray.unshift(data);
-        setFactData(newArray);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-  };
-
-  const freeSearch = (text) => {
-    fetch(`http://localhost:3030/search${text}`, {
-      method: "GET",
-    })
-      .then((results) => results.json())
-      .then((data) => {
-        setFactData(data.result);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-  };
-
-  const randomFact = () => {
-    fetch(`http://localhost:3030/search-fact`, {
-      method: "GET",
-    })
-      .then((results) => results.json())
-      .then((data) => {
-        let newArray = [...factData];
-        newArray.unshift(data);
-        setFactData(newArray);
+        if (freeSearch) {
+          setFactData(data.result);
+        } else {
+          let newArray = [...factData];
+          newArray.unshift(data);
+          setFactData(newArray);
+        }
       })
       .catch(function (error) {
         console.log(error);
@@ -198,7 +171,6 @@ export default function FormPropsTextFields() {
               label="Search"
             />
           </FormControl>
-
           <FormControl>
             <InputLabel
               shrink
@@ -211,17 +183,16 @@ export default function FormPropsTextFields() {
               labelId="category-select"
               id="category-select"
               className={classes.inputField}
+              defaultValue="Any"
               value={category}
               onChange={handleCategory}
             >
               <MenuItem
                 className={(classes.inputField, classes.item)}
-                value="
-              "
+                value="Any"
               >
                 Any
               </MenuItem>
-
               {categories.map((categorie, index) => (
                 <MenuItem
                   className={(classes.inputField, classes.item)}
@@ -235,12 +206,16 @@ export default function FormPropsTextFields() {
           </FormControl>
         </div>
 
+        <div className={termSize === true ? classes.visible : classes.hidden}>
+          Your search term must have 2 or more characters
+        </div>
+
         <div className={factData.length > 1 ? classes.visible : classes.hidden}>
           Showing {factData.length} results{" "}
         </div>
         <Button
           className={classes.button}
-          onClick={() => searchFacts()}
+          onClick={() => validateFields()}
           variant="contained"
           color="primary"
         >
