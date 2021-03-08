@@ -8,22 +8,79 @@ import InputLabel from "@material-ui/core/InputLabel";
 import Button from "@material-ui/core/Button";
 import Fact from "./Fact";
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    "& .MuiTextField-root": {
-      margin: theme.spacing(1),
-      width: "25ch",
-    },
-    formControl: {
-      margin: theme.spacing(1),
-      minWidth: 120,
-    },
-    selectEmpty: {
-      marginTop: theme.spacing(2),
+const useStyles = makeStyles({
+  container: {
+    margin: "7%",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    fontFamily: "Mulish",
+    textAlign: "center",
+    fontSize: "12px",
+  },
+
+  form: {
+    display: "flex",
+    flexDirection: "column",
+  },
+
+  inputsContainer: {
+    display: "flex",
+    flexDirection: "row",
+    margin: "30px",
+  },
+
+  inputField: {
+    fontFamily: "Mulish",
+    width: "296px",
+    textAlign: "left",
+    marginLeft: "15px",
+
+    "& .MuiFormLabel-root": {
+      fontFamily: "Mulish",
     },
   },
-}));
 
+  item: {
+    fontFamily: "Mulish",
+    "&:hover": {
+      background: "#DAF1F2",
+    },
+  },
+
+  inputLabel: {
+    fontFamily: "Mulish",
+    color: "#48CCCC",
+    fontSize: "13px",
+    marginLeft: "15px",
+  },
+
+  button: {
+    marginTop: "30px",
+    marginBottom: "30px",
+    height: "40px",
+    left: "0px",
+    right: "0px",
+    color: "#20232D",
+    fontFamily: "Mulish",
+    margin: "0 auto",
+
+    fontStyle: "normal",
+    fontWeight: "bold",
+    fontSize: "16px",
+    lineHeight: "20px",
+    textTransform: "none",
+
+    width: "245px",
+    background: "#25EFA1",
+    boxShadow: "0px 3px 5px rgba(0, 204, 126, 0.25)",
+
+    "&:hover": {
+      background: "#1dbf80",
+    },
+  },
+});
 export default function FormPropsTextFields() {
   const classes = useStyles();
 
@@ -117,10 +174,6 @@ export default function FormPropsTextFields() {
       });
   };
 
-  const cleanResults = () => {
-    setFactData([]);
-  };
-
   const capitalize = (str) => {
     return str.charAt(0).toUpperCase() + str.slice(1);
   };
@@ -128,37 +181,60 @@ export default function FormPropsTextFields() {
   useEffect(() => loadCategories(), []);
   console.log(factData);
   return (
-    <div>
-      <form className={classes.container} noValidate>
-        <FormControl className={classes.formControl}>
-          <TextField
-            value={freeText}
-            onChange={handleFreeText}
-            id="search"
-            label="Search"
-          />
-        </FormControl>
+    <div className={classes.container}>
+      <form className={classes.form} noValidate>
+        <div className={classes.inputsContainer}>
+          <FormControl>
+            <TextField
+              className={classes.inputField}
+              value={freeText}
+              onChange={handleFreeText}
+              id="search"
+              label="Search"
+            />
+          </FormControl>
 
-        <FormControl className={classes.formControl}>
-          <InputLabel shrink id="category">
-            Category
-          </InputLabel>
-          <Select
-            labelId="category-select"
-            id="category-select"
-            value={category}
-            onChange={handleCategory}
-            className={classes.selectEmpty}
-          >
-            <MenuItem value="">Any</MenuItem>
-
-            {categories.map((categorie, index) => (
-              <MenuItem key={index} value={categorie}>
-                {capitalize(categorie)}
+          <FormControl>
+            <InputLabel
+              shrink
+              className={(classes.inputField, classes.inputLabel)}
+              id="category"
+            >
+              Category
+            </InputLabel>
+            <Select
+              labelId="category-select"
+              id="category-select"
+              className={classes.inputField}
+              value={category}
+              onChange={handleCategory}
+            >
+              <MenuItem
+                className={(classes.inputField, classes.item)}
+                value="
+              "
+              >
+                Any
               </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+
+              {categories.map((categorie, index) => (
+                <MenuItem
+                  className={(classes.inputField, classes.item)}
+                  key={index}
+                  value={categorie}
+                >
+                  {capitalize(categorie)}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </div>
+
+        <div>
+          {factData.length > 0 ? (
+            <div>Showing {factData.length} results </div>
+          ) : null}
+        </div>
         <Button
           className={classes.button}
           onClick={() => searchFacts()}
@@ -167,25 +243,12 @@ export default function FormPropsTextFields() {
         >
           Get a new random fact!
         </Button>
-        <Button
-          className={classes.button}
-          onClick={() => cleanResults()}
-          variant="contained"
-          color="primary"
-        >
-          Clean results
-        </Button>
       </form>
 
       <div>
-        {factData.length > 0 ? (
-          <div>Showing {factData.length} results </div>
-        ) : null}
-        <div>
-          {factData.map((factItem, index) => (
-            <Fact key={index} fact={factItem.value} />
-          ))}
-        </div>
+        {factData.map((factItem, index) => (
+          <Fact key={index} fact={factItem.value} />
+        ))}
       </div>
     </div>
   );

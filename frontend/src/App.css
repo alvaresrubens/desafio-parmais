@@ -1,6 +1,17 @@
-@import url('https://fonts.googleapis.com/css?family=Mulish');
-body {
+@font-face {
   font-family: 'Mulish';
+  src: local('Mulish'), url(./fonts/Mulish-Regular.ttf) format('opentype');
+}
+
+@font-face {
+    font-family: 'Mulish';
+    font-weight: 900;
+    src: local('Mulish'), url(./fonts/Mulish-Bold.ttf) format('opentype');
+}
+
+.body {
+  font-family: Mulish;
+  font-style: normal;
   
 }
 
